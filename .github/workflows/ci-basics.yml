@@ -1,0 +1,29 @@
+name: "CI Basics"
+
+on:
+    push: ~
+    workflow_dispatch: ~
+
+jobs:
+    hello:
+        name: "Hello"
+        runs-on: ubuntu-latest
+        step:
+            - name: "Hello, World!"
+            run: echo "Hello, World!"
+    
+    goodbye:
+        name: "Goodbye"
+        runs-on: ubuntu-latest
+        step:
+            name: "Goodbye, World!"
+            run: | 
+                echo "Goodbye, World!"
+                echo "Goodbye, Wolrd!"
+            name: "Goodbye, Space!"
+            run: echo "Goodbye, Space!"
+
+
+
+
+        
