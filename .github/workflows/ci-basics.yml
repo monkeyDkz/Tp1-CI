@@ -8,20 +8,20 @@ jobs:
     hello:
         name: "Hello"
         runs-on: ubuntu-latest
-        step:
+        steps:
             - name: "Hello, World!"
-            run: echo "Hello, World!"
+              run: echo "Hello, World!"
     
     goodbye:
         name: "Goodbye"
         runs-on: ubuntu-latest
-        step:
-            name: "Goodbye, World!"
-            run: | 
+        steps:
+           - name: "Goodbye, World!"
+             run: | 
                 echo "Goodbye, World!"
                 echo "Goodbye, Wolrd!"
-            name: "Goodbye, Space!"
-            run: echo "Goodbye, Space!"
+           - name: "Goodbye, Space!"
+             run: echo "Goodbye, Space!"
 
 
 
