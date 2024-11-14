@@ -22,7 +22,19 @@ jobs:
                 echo "Goodbye, Wolrd!"
            - name: "Goodbye, Space!"
              run: echo "Goodbye, Space!"
-
+        
+    hello-goodbye:
+        needs: ["hello", "goodbye"]
+        name: "Hello, Goodbye"
+        runs-on: ubuntu-latest
+        steps:
+            - name: "Hello, World!"
+              run: echo "Hello, World!"
+            - name: "Goodbye, World!"
+              run: echo "Goodbye, World!"
+            - name: "Goodbye, Space!"
+              run: echo "Goodbye, Space!"
+        
 
 
 
