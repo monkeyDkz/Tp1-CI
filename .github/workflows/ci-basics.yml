@@ -15,9 +15,9 @@ jobs:
     goodbye:
         name: "Goodbye"
         runs-on: ubuntu-latest
+        continue-on-error: true
         steps:
            - name: "Goodbye, World!"
-             continue-on-error: true
              run: | 
                 echo "Goodbye, World!"
                 echo "Goodbye, Wolrd!"
