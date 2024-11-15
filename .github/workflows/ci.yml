@@ -13,7 +13,7 @@ jobs:
             database:
                 image: mysql
                 env:
-                    MYSQL_ROOT_PASSWORD: root
+                    MYSQL_ROOT_PASSWORD: password
                     MYSQL_DATABASE: app
                     MYSQL_ROOT_HOST: "%"
                 ports:
