@@ -9,16 +9,30 @@ jobs:
     deps:
         name: "Install Dependencies"
         runs-on: ubuntu-latest
+        services:
+            database:
+                image: mysql
+                env:
+                    MYSQL_ROOT_PASSWORD: root
+                    MYSQL_DATABASE: app
+                    MYSQL_ROOT_HOST: "%"
+                ports:
+                    - 3306:3306
         steps:
             - name: "Checkout"
               uses: actions/checkout@v2
             - run: ls
-            - name: Setup PHP with PECL extension
+            - name: "Setup PHP with PECL extension"
               uses: shivammathur/setup-php@v2
               with:
                 php-version: '8.1'
                 tools: composer:v2
-            - name: Install Composer Dependencies
-              run: composer install
-              
+            - name: "Install Composer Dependencies"
+              run: |
+                export APP_ENV=test
+                composer install --prefer-dist --no-interaction --no-progress
+            - name: "Check DATABASE heathly"
+              run: nc -vz 127.0.0.1 3306
+            
+
 
