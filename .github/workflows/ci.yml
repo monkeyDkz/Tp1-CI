@@ -14,7 +14,7 @@ jobs:
                 image: mysql
                 env:
                     MYSQL_ROOT_PASSWORD: password
-                    MYSQL_DATABASE: app
+                    MYSQL_DATABASE: app_test
                     MYSQL_ROOT_HOST: "%"
                 ports:
                     - 3306:3306
@@ -36,13 +36,14 @@ jobs:
             - name: "Run Migrations"
               run: php bin/console d:m:m
               env:
+                APP_ENV: test
                 DATABASE_HOST: 127.0.0.1
                 DATABASE_PASSWORD: password
                 DATABASE_NAME: app
             - name: "run tests functional"
               run: php bin/phpunit --filter=./tests/_3_Application
             - name: "run tests unit"
-              run: php bin/phpunit --filter=tests/_1_Unit
+              run: php bin/phpunit --testsuite=unit
             - name: "run phpstan"
               run: php bin/phpstan analyse src --level=7
             - name: "run php-cs-fixer"
