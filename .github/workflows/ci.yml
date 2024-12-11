@@ -56,7 +56,7 @@ jobs:
                 DATABASE_PASSWORD: password
                 DATABASE_NAME: app
             - name: "run phpstan"
-              run: php bin/phpstan analyse src --level=7
+              run: ./vendor/bin/phpstan analyse src --level=7
             - name: "run php-cs-fixer"
               run: php bin/php-cs-fixer fix --dry-run --diff
 
