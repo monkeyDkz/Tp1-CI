@@ -26,7 +26,7 @@ jobs:
               uses: shivammathur/setup-php@v2
               with:
                 php-version: '8.1'
-                tools: composer:v2, php-cs-fixer, phpstan
+                tools: composer:v2, php-cs-fixer, phpstan, phpunit
             - name: "Install Composer Dependencies"
               run: |
                 export APP_ENV=test
@@ -43,7 +43,7 @@ jobs:
             - name: "run tests functional"
               run: php bin/phpunit --filter=./tests/_3_Application
             - name: "run tests unit"
-              run: php bin/phpunit --testsuite=unit
+              run: php bin/phpunit 
             - name: "run phpstan"
               run: php bin/phpstan analyse src --level=7
             - name: "run php-cs-fixer"
