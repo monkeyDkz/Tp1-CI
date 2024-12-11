@@ -58,6 +58,6 @@ jobs:
             - name: "run phpstan"
               run: ./vendor/bin/phpstan analyse src --level=7
             - name: "run php-cs-fixer"
-              run: php bin/php-cs-fixer fix --dry-run --diff
+              run: ./vendor/bin/php-cs-fixer fix --dry-run --diff
 
 
