@@ -53,6 +53,6 @@ jobs:
             - name: "run phpstan"
               run: ./vendor/bin/phpstan analyse src --level=7
             - name: "run php-cs-fixer"
-              run: php-cs-fixer --config=phpcs.xml.dist
+              run: php-cs-fixer check --config=phpcs.xml.dist
 
 
