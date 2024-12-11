@@ -41,7 +41,7 @@ jobs:
                 DATABASE_PASSWORD: password
                 DATABASE_NAME: app
             - name: "run tests functional"
-              run: php bin/phpunit --filter=./tests/_3_Application
+              run: php bin/phpunit tests/_3_Application
             - name: "run tests unit"
               run: php bin/phpunit tests/_1_Unit
               env:
