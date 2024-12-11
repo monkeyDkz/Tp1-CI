@@ -40,19 +40,33 @@ jobs:
                 DATABASE_HOST: 127.0.0.1
                 DATABASE_PASSWORD: password
                 DATABASE_NAME: app
-            - name: "run tests unit"
-              run: php bin/phpunit tests/_1_Unit
-            - name: "run tests functional"
-              continue-on-error: true
-              run: php bin/phpunit tests/_3_Application
-              env:
-                APP_ENV: test
-                DATABASE_HOST:  127.0.0.1
-                DATABASE_PASSWORD: password
-                DATABASE_NAME: app
             - name: "run phpstan"
               run: ./vendor/bin/phpstan analyse src --level=7
             - name: "run php-cs-fixer"
               run: php-cs-fixer check src --diff
+        
+    units-test:
+      needs: ['deps']
+      name: "Run Unit Tests"
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - name: "run tests unit"
+          run: php bin/phpunit tests/_1_Unit
+    
+    functional-test:
+      needs: ['deps']
+      name: "Run Functional Tests"
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - name: "run tests functional"
+          continue-on-error: true
+          run: php bin/phpunit tests/_3_Application
+          env:
+            APP_ENV: test
+            DATABASE_HOST:  127.0.0.1
+            DATABASE_PASSWORD: password
+            DATABASE_NAME: app
 
-
+            
