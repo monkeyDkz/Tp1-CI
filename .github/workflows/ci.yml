@@ -43,7 +43,7 @@ jobs:
             - name: "run tests functional"
               run: php bin/phpunit --filter=./tests/_3_Application
             - name: "run tests unit"
-              run: php bin/phpunit
+              run: php bin/phpunit tests/_1_Unit
               env:
                 APP_ENV: test
                 DATABASE_HOST:  127.0.0.1
