@@ -42,11 +42,6 @@ jobs:
                 DATABASE_NAME: app
             - name: "run tests unit"
               run: php bin/phpunit tests/_1_Unit
-              env:
-                APP_ENV: test
-                DATABASE_HOST:  127.0.0.1
-                DATABASE_PASSWORD: password
-                DATABASE_NAME: app
             - name: "run tests functional"
               continue-on-error: true
               run: php bin/phpunit tests/_3_Application
@@ -58,6 +53,6 @@ jobs:
             - name: "run phpstan"
               run: ./vendor/bin/phpstan analyse src --level=7
             - name: "run php-cs-fixer"
-              run: php bin/php-cs-fixer fix --dry-run --diff
+              run: ./vendor/bin/php-cs-fixer fix --dry-run --diff
 
 
