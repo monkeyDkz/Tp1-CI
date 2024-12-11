@@ -43,7 +43,12 @@ jobs:
             - name: "run tests functional"
               run: php bin/phpunit --filter=./tests/_3_Application
             - name: "run tests unit"
-              run: php bin/phpunit 
+              run: php bin/phpunit
+              env:
+                APP_ENV: test
+                DATABASE_HOST:  127.0.0.1
+                DATABASE_PASSWORD: password
+                DATABASE_NAME: app_test
             - name: "run phpstan"
               run: php bin/phpstan analyse src --level=7
             - name: "run php-cs-fixer"
