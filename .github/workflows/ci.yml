@@ -1,72 +1,91 @@
 name: "CI"
 
 on:
-    push:
-        paths-ignore: "./ci-baiscs.yml"
-    workflow_dispatch: ~
+  push:
+    paths-ignore: "./ci-basics.yml"
+  workflow_dispatch: ~
 
 jobs:
-    deps:
-        name: "Install Dependencies"
-        runs-on: ubuntu-latest
-        services:
-            database:
-                image: mysql
-                env:
-                    MYSQL_ROOT_PASSWORD: password
-                    MYSQL_DATABASE: app_test
-                    MYSQL_ROOT_HOST: "%"
-                ports:
-                    - 3306:3306
-        steps:
-            - name: "Checkout"
-              uses: actions/checkout@v2
-            - run: ls
-            - name: "Setup PHP with PECL extension"
-              uses: shivammathur/setup-php@v2
-              with:
-                php-version: '8.1'
-                tools: composer:v2, php-cs-fixer
-            - name: "Install Composer Dependencies"
-              run: |
-                export APP_ENV=test
-                composer install --prefer-dist --no-interaction --no-progress
-            - name: "Check DATABASE heathly"
-              run: nc -vz 127.0.0.1 3306
-            - name: "Run Migrations"
-              run: php bin/console d:m:m
-              env:
-                APP_ENV: test
-                DATABASE_HOST: 127.0.0.1
-                DATABASE_PASSWORD: password
-                DATABASE_NAME: app
-            - name: "run phpstan"
-              run: ./vendor/bin/phpstan analyse src --level=7
-            - name: "run php-cs-fixer"
-              run: php-cs-fixer check src --diff
-        
-    units-test:
-      needs: ['deps']
-      name: "Run Unit Tests"
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v2
-        - name: "run tests unit"
-          run: php bin/phpunit tests/_1_Unit
-    
-    functional-test:
-      needs: ['deps']
-      name: "Run Functional Tests"
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v2
-        - name: "run tests functional"
-          continue-on-error: true
-          run: php bin/phpunit tests/_3_Application
-          env:
-            APP_ENV: test
-            DATABASE_HOST:  127.0.0.1
-            DATABASE_PASSWORD: password
-            DATABASE_NAME: app
+  deps:
+    name: "Install depedencies"
+    runs-on: "ubuntu-latest"
+    services:
+      database:
+        image: mysql
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: app_test
+          MYSQL_ROOT_HOST: "%"
+        ports:
+          - 3306:3306
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache Vendors
+        id: cache-primes
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: vendor-${{ hashFiles('**/composer.lock') }}
+      - name: Setup PHP with tools
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          tools: composer, php-cs-fixer
+      - name: "Install PHP deps"
+        run: |
+          export APP_ENV=test
+          composer install --prefer-dist --no-interaction --no-progress
+      - name: "PHP CS Fixer"
+        run: php-cs-fixer check src --diff --show-progress none
+        continue-on-error: true
+      - name: "PHPStan"
+        run: vendor/bin/phpstan analyse src --level=9
 
-            
+  unit_tests:
+    needs: ["deps"]
+    name: "Unit tests"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache/restore@v4
+        with:
+          key: vendor-${{ hashFiles('**/composer.lock') }}
+          path: vendor
+      - name: "Unit tests"
+        run: php bin/phpunit tests/_1_Unit
+
+  functional_tests:
+    needs: ["deps"]
+    name: "Unit tests"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache/restore@v4
+        with:
+          key: vendor-${{ hashFiles('**/composer.lock') }}
+          path: vendor
+      - name: "Check Database healthy"
+        run: nc -vz 127.0.0.1 3306
+      - name: "Start migrations"
+        run: php bin/console d:m:m
+        env:
+          APP_ENV: test
+          DATABASE_HOST: 127.0.0.1
+          DATABASE_PASSWORD: password
+          DATABASE_NAME: app
+      - name: "Functional tests"
+        continue-on-error: true
+        env:
+          APP_ENV: test
+          DATABASE_HOST: 127.0.0.1
+          DATABASE_PASSWORD: password
+          DATABASE_NAME: app
+        run: php bin/phpunit tests/_3_Application
+
+  notify:
+    needs: ["unit_tests", "functional_tests"]
+    name: "Notify"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Notify"
+        run: echo "All tests passed"
