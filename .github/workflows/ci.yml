@@ -39,6 +39,13 @@ jobs:
                 DATABASE_HOST: 127.0.0.1
                 DATABASE_PASSWORD: password
                 DATABASE_NAME: app
-            
+            - name: "run tests unit"
+              run: php bin/phpunit --filter=tests/_1_Unit\Entity
+            - name: "run tests functional"
+              run: php bin/phpunit --filter=tests/_3_Application/Controller
+            - name: "run phpstan"
+              run: php bin/phpstan analyse src --level=7
+            - name: "run php-cs-fixer"
+              run: php bin/php-cs-fixer fix --dry-run --diff
 
 
