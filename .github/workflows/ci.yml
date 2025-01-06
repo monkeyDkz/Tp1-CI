@@ -45,8 +45,8 @@ jobs:
       - name: "Build"
         run: |
           echo "Build project"
-          echo "MAILER SECRET: {{ secrets.MAILER_SECRET }}"
-          echo "MAILER SENDER NAME: {{ vars.MAILER_SENDER_NAME }}"
+          echo "MAILER SECRET: ${{ secrets.MAILER_SECRET }}"
+          echo "MAILER SENDER NAME: ${{ vars.MAILER_SENDER_NAME }}"
 
   unit_tests:
     needs: ["build"]
