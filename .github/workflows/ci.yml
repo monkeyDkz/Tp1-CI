@@ -9,15 +9,6 @@ jobs:
   deps:
     name: "Install depedencies"
     runs-on: "ubuntu-latest"
-    services:
-      database:
-        image: mysql
-        env:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: app_test
-          MYSQL_ROOT_HOST: "%"
-        ports:
-          - 3306:3306
     steps:
       - uses: actions/checkout@v4
       - name: Cache Vendors
@@ -26,13 +17,6 @@ jobs:
         with:
           path: vendor
           key: vendor-${{ hashFiles('**/composer.lock') }}
-      - name: "Build"
-        run: | 
-          echo "Build project"
-          echo "MAILER_SECRET: {{ secrets.MAILER_SECRET }}"
-          echo "MAILER_SENDER_NAME: {{secrets.MAILER_SENDER_NAME}}"
-          
-      
       - name: Setup PHP with tools
         uses: shivammathur/setup-php@v2
         with:
@@ -48,8 +32,24 @@ jobs:
       - name: "PHPStan"
         run: vendor/bin/phpstan analyse src --level=9
 
-  unit_tests:
+  build:
     needs: ["deps"]
+    name: "Build"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache/restore@v4
+        with:
+          path: vendor
+          key: vendor-${{ hashFiles('**/composer.lock') }}
+      - name: "Build"
+        run: |
+          echo "Build project"
+          echo "MAILER SECRET: {{ secrets.MAILER_SECRET }}"
+          echo "MAILER SENDER NAME: {{ vars.MAILER_SENDER_NAME }}"
+
+  unit_tests:
+    needs: ["build"]
     name: "Unit tests"
     runs-on: "ubuntu-latest"
     steps:
@@ -62,9 +62,18 @@ jobs:
         run: php bin/phpunit tests/_1_Unit
 
   functional_tests:
-    needs: ["deps"]
+    needs: ["build"]
     name: "Functional tests"
     runs-on: "ubuntu-latest"
+    services:
+      database:
+        image: mysql
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: app_test
+          MYSQL_ROOT_HOST: "%"
+        ports:
+          - 3306:3306
     steps:
       - uses: actions/checkout@v4
       - uses: actions/cache/restore@v4
