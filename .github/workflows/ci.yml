@@ -56,7 +56,7 @@ jobs:
 
   functional_tests:
     needs: ["deps"]
-    name: "Unit tests"
+    name: "Functional tests"
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v4
