@@ -26,6 +26,13 @@ jobs:
         with:
           path: vendor
           key: vendor-${{ hashFiles('**/composer.lock') }}
+      - name: "Build"
+        run: | 
+          echo "Build project"
+          echo "MAILER_SECRET: {{ secrets.MAILER_SECRET }}"
+          echo "MAILER_SENDER_NAME: {{secrets.MAILER_SENDER_NAME}}"
+          
+      
       - name: Setup PHP with tools
         uses: shivammathur/setup-php@v2
         with:
